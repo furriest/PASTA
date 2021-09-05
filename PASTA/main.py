@@ -118,7 +118,8 @@ def hosts_get(request):
                 print(hosts)
                 server.send("HTTP/1.0 400 Bad request\r\n")
         else:
-            server.send("HTTP/1.0 201 OK\r\n")
+# здесь будет формироваться таблица статусов мониторящихся хостов            
+            server.send("HTTP/1.0 200 OK\r\n")
     except:
         server.send("HTTP/1.0 503 Service Unavailable\r\n")
 
@@ -132,10 +133,10 @@ def hosts_put(request):
 #                print('PUT ', req)
                 hosts[req_ip]=[False, int(utime.time())]
                 save_db(dbname)
-                server.send("HTTP/1.0 200 OK\r\n")
+                server.send("HTTP/1.0 201 Created\r\n")
             else:
 #                print(hosts)
-                server.send("HTTP/1.0 405 Method Not Allowed \r\n")
+                server.send("HTTP/1.0 400 Bad request\r\n")
         else:
             server.send("HTTP/1.0 405 Method Not Allowed\r\n")
     except:
