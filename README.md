@@ -2,7 +2,9 @@
 Ping And SMS Timeless Application 
 
 функция отправки смс
+
 функция проверки доступности оборудования (по ip-адресу)
+
 http-сервер:
 - /hosts/ (GET)
 - /hosts/<ip> (GET,PUT,DELETE) 
