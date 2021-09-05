@@ -23,6 +23,7 @@ def read_params(configfilename):
             params = json.load(f)
     except:
             print('Configuration read error! System halted.')
+            sys.exit()
 
 def connect_wifi(WLAN_ID, WLAN_PASS):
     # Init wifi
