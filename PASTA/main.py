@@ -100,8 +100,7 @@ def save_db(dbfilename):
 
 def send_sms(request):
     req = request.split('\n')[0].split()[1].split('/')
-    print(str(unquote(req[3]), 'ucs2'))
-#    server.send(request)
+#    print(str(unquote(req[3]), 'ucs2'))
     if gsm.sendSMS(req[2], str(unquote(req[3]), 'ucs2')):
         server.send("HTTP/1.0 200 OK\r\n")
     else:
@@ -130,12 +129,12 @@ def hosts_put(request):
     try:
         if req_ip:
             if isipv4(req_ip):
-                print('PUT ', req)
+#                print('PUT ', req)
                 hosts[req_ip]=[False, int(utime.time())]
                 save_db(dbname)
                 server.send("HTTP/1.0 200 OK\r\n")
             else:
-                print(hosts)
+#                print(hosts)
                 server.send("HTTP/1.0 405 Method Not Allowed \r\n")
         else:
             server.send("HTTP/1.0 405 Method Not Allowed\r\n")
@@ -149,7 +148,7 @@ def hosts_delete(request):
     try:
         if req_ip:
             if isipv4(req_ip):
-                print('DELETE ', req)
+#                print('DELETE ', req)
                 hosts.pop(req_ip, None)
                 save_db(dbname)
                 server.send("HTTP/1.0 200 OK\r\n")
@@ -177,7 +176,6 @@ def check_oldest():
                 gsm.sendSMS(params["ADMIN_PHONE"], key + ' died!')
         time.sleep(1)
 
-
 # main process
 read_params(config)
 connect_wifi(params['WLAN_ID'], params['WLAN_PASS'])
@@ -186,7 +184,7 @@ init_gsm(params['GSM_APN'], params['GSM_USER'], params['GSM_PASS'])
 read_db(dbname)
 _thread.start_new_thread('Main circle', check_oldest, ())
 while running:
-    print('Waiting for request...')
+    print('Waiting for requests...')
     server = MicroPyServer()
     server.add_route("/send", send_sms)
     server.add_route("/hosts", hosts_get, method="GET")
