@@ -1,13 +1,12 @@
 import machine, time, sys, utime, _thread
-from machine import WDT
 import gsm, network
 import socket
-from micropyserver import MicroPyServer
 from tools import unquote, isipv4
 import json
 import uping
+from microdot_asyncio import Microdot
 
-version = 0.8
+version = 0.9
 
 config = './params.cfg'
 dbname = './hosts.cfg'
@@ -15,6 +14,8 @@ running = True
 
 hosts = dict()
 params = dict()
+
+app = Microdot()
 
 def read_params(configfilename):
     global params
@@ -97,8 +98,9 @@ def save_db(dbfilename):
         else:
             print('Database save error! SMS hasn\'t been delivered')
 
-
-def send_sms(request):
+@app.route('/send')
+async def send_sms(request):
+    print(request)
     req = request.split('\n')[0].split()[1].split('/')
 #    print(str(unquote(req[3]), 'ucs2'))
     if gsm.sendSMS(req[2], str(unquote(req[3]), 'ucs2')):
@@ -183,14 +185,10 @@ connect_wifi(params['WLAN_ID'], params['WLAN_PASS'])
 clock_sync()
 init_gsm(params['GSM_APN'], params['GSM_USER'], params['GSM_PASS'])
 read_db(dbname)
-_thread.start_new_thread('Main circle', check_oldest, ())
-while running:
-    print('Waiting for requests...')
-    server = MicroPyServer()
-    server.add_route("/send", send_sms)
-    server.add_route("/hosts", hosts_get, method="GET")
-    server.add_route("/hosts", hosts_put, method="PUT")
-    server.add_route("/hosts", hosts_delete, method="DELETE")
-    server.start()
-sys.exit()
-
+app.run()
+print('Waiting for requests...')
+#    server.add_route("/send", send_sms)
+#    server.add_route("/hosts", hosts_get, method="GET")
+#    server.add_route("/hosts", hosts_put, method="PUT")
+#    server.add_route("/hosts", hosts_delete, method="DELETE")
+#    server.start()
